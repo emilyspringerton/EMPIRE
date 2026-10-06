@@ -18,13 +18,21 @@ analysis for ECOWAR/DEADWEIGHT/BIG_O — a different cut, because these three sh
 layer: not real-time movement/engine primitives, but **competitive PvP meta** — ladder, bot pool,
 identity, economy.
 
-**Honest caveat before anything else:** this sandbox has `BIG_O` and `DEADWEIGHT` checked out.
-`ECOWAR` is not present here (referenced only via the main `CLAUDE.md` repo table and
-`DEADWEIGHT/NORTHSTAR.md`'s own description of it) and "`DEADWEIGHT2`" does not exist as a repo
-anywhere in this monorepo index — only `DEADWEIGHT` does. This doc treats "`DEADWEIGHT2`" as
-`DEADWEIGHT` and flags the discrepancy rather than guessing a second repo into existence. If a
-real `DEADWEIGHT2` exists upstream and hasn't been pulled, that's the first thing to check before
-treating this doc as grounded in current reality.
+**Honest caveat, updated 2026-10-06 (founder corrections, same session):** this sandbox has
+`BIG_O` and `DEADWEIGHT` (v1) checked out. `ECOWAR` and `REDGARDEN` are not present here at all —
+grounded only in repo-table/sibling-doc descriptions, not a direct code read. "DEADSPACE1"
+(earlier founder message) is confirmed a typo for `DEADWEIGHT`. **`DEADWEIGHT_2` is real** — founder
+confirms it is already built, just not shipped yet, and not checked out in this sandbox either, so
+its actual code/scope below is inferred from the founder's own description plus `DEADWEIGHT` v1's
+spec, not read directly — flagged, not fabricated as verified. **`REDGARDEN` has no auth model**
+(founder, real-time) — this corrects §1's earlier assumption below that DEADWEIGHT's guest-identity
+ask could reuse "the REDGARDEN model": there is no REDGARDEN model to reuse. That ask was always
+asking for *new* IDUNA work (Phase 1 already scoped it that way); the correction removes a false
+sense that a working reference implementation exists somewhere to copy from. It also means
+REDGARDEN itself cannot plug into Empire's identity backbone until it gets *some* auth model — this
+is now a named blocker, not assumed solved, for any future REDGARDEN-into-Empire step (REDGARDEN
+is not one of this doc's three merge targets, but it's the lineage ECOWAR forked from, so the gap
+is adjacent and worth tracking in the same doc).
 
 ## 1) The actual shared layer — checked, not assumed
 
@@ -76,7 +84,80 @@ three games' own client/engine code.**
 or BIG_O's day/night/basement SHANKPIT-engine code. Each stays its own repo, becomes a client of
 `EMPIRE`'s backbone the same way a game becomes a client of IDUNA today.
 
-## 3) Phased plan
+## 2a) The fusion, as actually asked for (founder, real-time, same session)
+
+> "cook on EMPIRE — merge ECOWAR and BIG_O via a RTS Clash of Clans-like interface, take any bits
+> from DEADWEIGHT, and build out a DEADWEIGHT_2 full RTS-style shipping and world ecology
+> management sim — play cards to organize the resources of the runners... mix in BIG_O, all the
+> factions are there, we have a full built world with lore and factions, and TRAPX is the glue
+> that ties it all together."
+
+This is more specific than §1-2's backbone-only read — it asks for a real gameplay fusion, not
+just shared ladder/identity plumbing. Mapped against what each piece actually is (checked against
+the real descriptions on record, not invented fresh):
+
+- **The Clash of Clans layer is BIG_O's own "day/night/basement" structure, renamed to its genre.**
+  CoC's loop is: a persistent home base you build between raids, an attack phase against another
+  player's base (or an async ghost of it), and a resource economy that gates both. BIG_O already
+  *is* this shape — basement (build/manage), day (go out and take resources from the world),
+  basement-again (spend them), night (the social-stealth layer CoC doesn't have, BIG_O's own
+  genuinely novel Attention/Heat system). The "RTS Clash of Clans interface" isn't a new system to
+  invent — it's BIG_O's basement-and-day loop given a top-down base-view UI instead of (or
+  alongside) its first-person SHANKPIT-engine view.
+- **ECOWAR supplies the attack/combat resolution.** ECOWAR's real, shipped 16-card decision-logic
+  system (`stdlib/ecowar/card_effect_mod.prn`) is a card-driven combat resolver that already works
+  standalone. In the fusion, an ECOWAR "attack" becomes what happens when you raid another
+  player's BIG_O-shaped base: the CoC-style base view is the strategic layer, ECOWAR's card system
+  is what actually resolves the fight once it starts — same relationship Clash Royale's card combat
+  has to Clash of Clans' base-building, which is very likely the actual reference point being
+  reached for here even though only "Clash of Clans" was named.
+- **DEADWEIGHT's real idea — the grid-packing/fragmentation-tax knapsack — becomes the *shipping*
+  mechanic, not the combat mechanic.** DEADWEIGHT v1 used its 6x6 grid for combat positioning;
+  "shipping and world ecology management" reframes the same spatial-knapsack idea around packing
+  cargo into **runners** (the transport unit the founder names directly) — splittable items,
+  fragmentation tax, same engine, different fiction: not "pack your combat loadout," but "pack
+  your supply run before it ships out into a contested world." This is the "bits from DEADWEIGHT"
+  the founder asked to take, named precisely rather than vaguely.
+- **"Play cards to organize the resources of the runners"** is DEADWEIGHT's card layer
+  (`card_rules.prn` — real, pure, headless, dual-emittable per `BIG_O/NORTHSTAR.md`'s own citation
+  of it) repointed at logistics instead of combat: a card represents a cargo/route/crew decision
+  for a runner, resolved the same deterministic, PARENA-scalar way DEADWEIGHT already resolves
+  combat cards. Same module shape, new domain — not a new system.
+- **TRAPX is the lore/faction substrate underneath all of it**, exactly as named:
+  `SHANKPIT/docs2/TRAPX_NORTHSTAR.md` already has a real faction roster (The Frequency, The Bloc,
+  Procurement Houses, Oversight Sects, Media Apparatus, and the newer Trustees) with a Fame/
+  reputation table. BIG_O is already explicitly built in the TRAPX universe (its own NORTHSTAR
+  frames the night-society/thought-police setting as TRAPX-flavored). ECOWAR and DEADWEIGHT are
+  **not** currently TRAPX-attached in anything on record — their card/combat systems are
+  faction-agnostic today. "All the factions are there" is the ask to retrofit ECOWAR's 16 cards
+  and DEADWEIGHT's runner/cargo cards as faction-aligned content (a card belongs to The Frequency,
+  The Bloc, etc.) rather than a neutral deck, using TRAPX's existing Fame mechanic as the
+  faction-reputation layer across all three games at once — this is the actual "glue."
+
+**What this means concretely for `DEADWEIGHT_2`** (since the founder says it is already built, not
+shipped): if its real current scope doesn't yet include the shipping/ecology/runner-card layer
+above, that's the gap between "built" and "the thing just asked for" — not a reason to assume
+`DEADWEIGHT_2` needs a rewrite. This doc cannot check `DEADWEIGHT_2`'s actual current code (not
+in this sandbox) — the real next step is reading it directly before scoping further, not
+extending this design blind.
+
+## 3) Ship-first priority (founder, real-time: "ship ship fast iterate")
+
+Reordering §3's original phase plan under actual urgency rather than dependency-clean sequencing:
+
+1. **Ship `DEADWEIGHT_2` first.** It's built, not shipped — the highest-leverage move available is
+   finding out *why* and clearing that, not starting new design work on top of it. The two most
+   likely blockers given everything on record: (a) no guest-identity provider in IDUNA yet (§3
+   Phase 1 below — real, confirmed-missing), (b) whatever its own untested/unverified edges are,
+   which this doc can't see without reading `DEADWEIGHT_2` directly. **Next real action: open
+   `DEADWEIGHT_2` (wherever it actually lives — ask the founder for its path/repo if not obvious)
+   and audit it against a real ship checklist before writing more design docs about it.**
+2. **Then** the ECOWAR+BIG_O Clash-of-Clans fusion (§2a) — real design work, not yet started,
+   correctly sequenced after the thing that's already 90% done ships.
+3. **Then** the backbone phases below (§3 original) — they matter most once there's more than one
+   live game sharing players, which is truer after step 1 ships than before.
+
+## 3a) Original phased plan (dependency order, now step 3 above)
 
 - **Phase 0 — name the backbone, touch nothing live.** This doc. Hand sub-items to
   `EMILY/BACKLOG.md` under a new section rather than starting build here (Principle 19 — unscoped
@@ -112,3 +193,16 @@ or BIG_O's day/night/basement SHANKPIT-engine code. Each stays its own repo, bec
    (same relationship IDUNA has to every product that authenticates against it) is the current
    read — not forced to merge just because both are "empire of worlds"-shaped asks from the same
    session.
+4. **REDGARDEN has no auth model at all** (founder, real-time, 2026-10-06) — a real, named gap,
+   not assumed fixed by anything in this doc. ECOWAR forked from REDGARDEN; if ECOWAR inherited
+   the same gap rather than building its own real auth on top during the fork, that's worth
+   checking directly before Phase 1's guest-identity work is treated as "add a provider" rather
+   than "build auth for ECOWAR from scratch too." Not resolved here — flagged for a direct read of
+   ECOWAR's actual account code once it's available in a sandbox that has it checked out.
+5. Does the Clash-of-Clans fusion (§2a) want ECOWAR's card system and DEADWEIGHT's runner-card
+   system to become ONE card engine (faction-tagged cards usable as either a combat move or a
+   logistics move depending on game context), or two separate card systems that merely share the
+   same TRAPX faction-tagging convention? The founder's "mix in BIG_O, all the factions are there"
+   reads as the latter (shared *fiction*, not shared *mechanic*) but isn't explicit either way —
+   worth confirming before building a unified card engine that might be over-engineering two
+   genuinely different card domains (combat resolution vs. logistics resolution) into one.
