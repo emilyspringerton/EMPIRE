@@ -149,10 +149,11 @@ drift). Relevant hits beyond the six named above:
 
 ## 5) Open questions (real, not resolved here)
 
-1. **Is BIG_O's Attention/Heat module's data shape actually compatible with what ECOWAR's card
-   effects need to read/write**, or does 3.1 need a translation layer? Not checked at the bit
-   level yet — both are "headless, PARENA-scalar, deterministic," which is necessary but not
-   sufficient for a clean read/write bridge.
+1. ~~Is BIG_O's Attention/Heat module's data shape actually compatible with what ECOWAR's card effects need?~~
+   **Resolved at the bit level (kanban #582, 2026-10-08):** yes, no translation layer needed. Both sides are plain
+   32-bit signed `int`. Every decorum and action stays in 0..100 (checked exhaustively). The largest scaled card
+   magnitude fits in int. EMPIRE's MYTHIC list matches ECOWAR's compiled `card_effect_mod` for all 16 cards
+   (`make compat`). The only shared quantity is decorum, so no other field needs translating.
 2. ~~What, specifically, is DEADWEIGHT_2 missing to ship?~~ **Resolved (kanban #580, 2026-10-08):** nothing.
    v0.3.0 shipped 2026-09-25 with Linux and Windows assets, and v0.6.0 is latest. See `audits/deadweight2_ship_audit.md`.
 3. ~~Does "BIG_O is the tech tree" mean a literal research/upgrade tree UI?~~ **Resolved, same

@@ -25,6 +25,11 @@ code lives here. See `NORTHSTAR.md` for the scope and merge order.
   `MANIFEST.sha256` records their hashes. Re-sync with `make sync-big-o` (needs a sibling `../BIG_O`
   checkout, or set `BIG_O_DIR`). Never edit `vendor/` by hand.
 
+- `tests/test_bit_compat.c` — bit-level check of the BIG_O/ECOWAR seam (kanban #582). It runs against ECOWAR's
+  real compiled card mod when a checkout is present: `make compat ECOWAR_DIR=../ECOWAR`.
+- `audits/` — kanban audits. `deadweight2_ship_audit.md` (#580, already shipped) and
+  `trapx_doctrine_reconciliation.md` (#581, the standalone TRAPX repo is the doctrine).
+
 ## Build and test
 
 ```bash
