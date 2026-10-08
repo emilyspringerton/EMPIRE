@@ -72,6 +72,11 @@ headlessly against a vendored copy of BIG_O's witness rules (`make test`). The d
 real; the MYTHIC/MUNDANE mapping is an invented v1 tuning pending founder sign-off. ECOWAR's own copy (`aff6ce0`)
 is not switched onto this module yet. §3.2 TECHTREE shipped as a BIG_O phone app (BIG_O `8f28e26`), shell only.
 
+**§3.3 (kanban #578, 2026-10-08):** the deck and unit-placement model is built here in `deck/`: an 8-card
+cycle, a 4-slot hand, a DECK screen and a UNITS placement grid, gated and written back through the bridge. It
+is headless and tested (`make test`). Not yet rendered: a phone shell has to draw it. Open: where that shell lives,
+and whether ECOWAR's own client hosts it instead.
+
 **Why this pair, first:** ECOWAR already has real cards with no UI; BIG_O already has a real
 headless sim with no GUI. Both halves of "client ↔ sim" exist independently and neither is
 wired to anything yet — this is the cheapest real integration available, not a new build.
