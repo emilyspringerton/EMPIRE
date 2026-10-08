@@ -130,6 +130,10 @@ wired to anything yet — this is the cheapest real integration available, not a
 to DEADWEIGHT channels. SLOW, SILENCE and MYTHIC scaling have no equivalent, so the grammar would need changing,
 which is a founder decision. See `audits/card_language_mapping.md`.
 
+**§3.4 hero UI (kanban #584, 2026-10-08):** blocked, not built. HEROES_VS0 covers REDGARDEN's own kits, not ECOWAR's
+16 card heroes, and the source ECOWAR cites (`TYLER/multiverse_heroes.md`) is missing from this checkout. See
+`audits/hero_ui_lift_blocked.md`.
+
 ## 4) Full `github.com/emilyspringerton/*` inventory — what else is relevant, checked live
 
 Pulled via `gh repo list emilyspringerton --limit 200` this session (91 repos total, real org
