@@ -5,13 +5,18 @@ CFLAGS ?= -std=c99 -O2 -Wall -Wextra -Werror -DPARENA_NO_GRAPHICS
 
 VENDOR = vendor/big_o/witness_rules.c
 
-test: build/test_faction_bridge build/test_deck
+test: build/test_faction_bridge build/test_faction_state build/test_deck
 	./build/test_faction_bridge
+	./build/test_faction_state
 	./build/test_deck
 
-build/test_deck: tests/test_deck.c deck/deck.c deck/ui.c bridge/faction_bridge.c $(VENDOR)
+build/test_faction_state: tests/test_faction_state.c bridge/faction_state.c bridge/faction_bridge.c $(VENDOR)
 	@mkdir -p build
-	$(CC) $(CFLAGS) -I vendor/big_o -o $@ tests/test_deck.c deck/deck.c deck/ui.c bridge/faction_bridge.c $(VENDOR)
+	$(CC) $(CFLAGS) -I vendor/big_o -o $@ tests/test_faction_state.c bridge/faction_state.c bridge/faction_bridge.c $(VENDOR)
+
+build/test_deck: tests/test_deck.c deck/deck.c deck/ui.c bridge/faction_state.c bridge/faction_bridge.c $(VENDOR)
+	@mkdir -p build
+	$(CC) $(CFLAGS) -I vendor/big_o -o $@ tests/test_deck.c deck/deck.c deck/ui.c bridge/faction_state.c bridge/faction_bridge.c $(VENDOR)
 
 build/test_faction_bridge: tests/test_faction_bridge.c bridge/faction_bridge.c $(VENDOR)
 	@mkdir -p build

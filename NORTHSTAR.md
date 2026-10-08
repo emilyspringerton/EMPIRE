@@ -77,6 +77,11 @@ cycle, a 4-slot hand, a DECK screen and a UNITS placement grid, gated and writte
 is headless and tested (`make test`). Not yet rendered: a phone shell has to draw it. Open: where that shell lives,
 and whether ECOWAR's own client hosts it instead.
 
+**§3.3 wiring (kanban #579, 2026-10-08):** the deck UI now binds to a shared `EmpireFaction` record
+(`bridge/faction_state.{h,c}`) instead of owning its own decorum. The BIG_O side loads authoritative decorum
+into it and both sides read and write the same numbers. The live feed from a BIG_O server is still missing:
+BIG_O has no server-side faction decorum store yet (only the scenario sim `core/sim.h`).
+
 **Why this pair, first:** ECOWAR already has real cards with no UI; BIG_O already has a real
 headless sim with no GUI. Both halves of "client ↔ sim" exist independently and neither is
 wired to anything yet — this is the cheapest real integration available, not a new build.

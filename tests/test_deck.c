@@ -1,6 +1,7 @@
 /* test_deck.c -- headless tests for the EMPIRE deck and placement UI (kanban #578). */
 #include <stdio.h>
 #include "../deck/ui.h"
+#include "../bridge/faction_state.h"
 
 static int failures = 0;
 #define CHECK(cond, msg) do { \
@@ -9,6 +10,9 @@ static int failures = 0;
 } while (0)
 
 static const int DECK8[8] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+/* A fresh faction at BIG_O decorum_start(), like the BIG_O side would load it. */
+static void fresh_faction(EmpireFaction *f) { empire_faction_load(f, 80); }
 
 static void test_deck_validation(void) {
     EmpireDeck d;
@@ -37,8 +41,8 @@ static void test_mythic_lookup_matches_card_mod(void) {
 }
 
 static void test_deck_screen_select_enters_placement(void) {
-    EmpireUi u;
-    empire_ui_init(&u, DECK8, 8);
+    EmpireUi u; EmpireFaction f; fresh_faction(&f);
+    empire_ui_init(&u, &f, DECK8, 8);
     empire_ui_input(&u, EUI_RIGHT);
     EmpireEffect e = empire_ui_input(&u, EUI_SELECT);
     CHECK(e.kind == EUI_FX_NONE && u.screen == EUI_SCREEN_UNITS, "SELECT on the hand opens placement without spending anything yet");
@@ -46,8 +50,8 @@ static void test_deck_screen_select_enters_placement(void) {
 }
 
 static void test_placement_clamps_and_commits(void) {
-    EmpireUi u;
-    empire_ui_init(&u, DECK8, 8);
+    EmpireUi u; EmpireFaction f; fresh_faction(&f);
+    empire_ui_init(&u, &f, DECK8, 8);
     empire_ui_input(&u, EUI_SELECT);
     empire_ui_input(&u, EUI_LEFT);
     empire_ui_input(&u, EUI_UP);
@@ -63,36 +67,54 @@ static void test_placement_clamps_and_commits(void) {
 }
 
 static void test_back_cancels_with_nothing_spent(void) {
-    EmpireUi u;
-    empire_ui_init(&u, DECK8, 8);
+    EmpireUi u; EmpireFaction f; fresh_faction(&f);
+    empire_ui_init(&u, &f, DECK8, 8);
     int before = u.deck.hand[0];
     empire_ui_input(&u, EUI_SELECT);
     EmpireEffect e = empire_ui_input(&u, EUI_BACK);
     CHECK(e.kind == EUI_FX_NONE && u.screen == EUI_SCREEN_DECK && u.pending_slot == -1, "BACK from placement returns to the hand");
-    CHECK(u.deck.hand[0] == before && u.decorum == 80, "a cancelled placement spends no card and no decorum");
+    CHECK(u.deck.hand[0] == before && f.decorum == 80, "a cancelled placement spends no card and no decorum");
 }
 
 static void test_placement_writes_back_decorum(void) {
-    EmpireUi u;
-    empire_ui_init(&u, DECK8, 8);       /* hand[0] = card 0, MUNDANE */
+    EmpireUi u; EmpireFaction f; fresh_faction(&f);
+    empire_ui_init(&u, &f, DECK8, 8);       /* hand[0] = card 0, MUNDANE */
     empire_ui_input(&u, EUI_SELECT);
     empire_ui_input(&u, EUI_SELECT);
-    CHECK(u.decorum == 81, "a MUNDANE placement earns +1 decorum through the bridge");
+    CHECK(f.decorum == 81, "a MUNDANE placement earns +1 decorum through the bridge");
     empire_ui_input(&u, EUI_RIGHT);     /* hand[1] = card 1, MUNDANE */
     empire_ui_input(&u, EUI_RIGHT);     /* hand[2] = card 2, MUNDANE */
     empire_ui_input(&u, EUI_RIGHT);     /* hand[3] = card 3, MYTHIC */
     empire_ui_input(&u, EUI_SELECT);
     empire_ui_input(&u, EUI_SELECT);
-    CHECK(u.decorum == 56, "a MYTHIC placement spends 25 decorum through the bridge");
+    CHECK(f.decorum == 56, "a MYTHIC placement spends 25 decorum through the bridge");
 }
 
 static void test_cancelled_faction_is_blocked(void) {
-    EmpireUi u;
-    empire_ui_init(&u, DECK8, 8);
-    u.decorum = 0;                      /* CANCELLED */
+    EmpireUi u; EmpireFaction f; fresh_faction(&f);
+    empire_ui_init(&u, &f, DECK8, 8);
+    empire_faction_load(&f, 0);         /* CANCELLED, from the BIG_O side */
     EmpireEffect e = empire_ui_input(&u, EUI_SELECT);
     CHECK(e.kind == EUI_FX_BLOCKED && u.screen == EUI_SCREEN_DECK, "a CANCELLED faction's SELECT is refused and stays on the hand");
     CHECK(u.deck.hand[0] == 0, "a blocked SELECT spends no card");
+}
+
+/* Shared faction state (kanban #579): the UI reads and writes the same record the BIG_O side owns. */
+static void test_shared_faction_is_seen_by_both_sides(void) {
+    EmpireFaction f; fresh_faction(&f);
+    EmpireUi a, b;
+    empire_ui_init(&a, &f, DECK8, 8);
+    empire_ui_init(&b, &f, DECK8, 8);
+    empire_ui_input(&a, EUI_SELECT); empire_ui_input(&a, EUI_SELECT);   /* a casts MUNDANE: +1 */
+    CHECK(f.decorum == 81, "a cast made through one UI is visible in the shared faction record");
+    empire_faction_load(&f, 0);                                          /* BIG_O drops the faction to CANCELLED */
+    EmpireEffect e = empire_ui_input(&b, EUI_SELECT);
+    CHECK(e.kind == EUI_FX_BLOCKED, "a second UI bound to the same faction is blocked by the same CANCELLED state");
+}
+
+static void test_ui_init_requires_a_faction(void) {
+    EmpireUi u;
+    CHECK(!empire_ui_init(&u, NULL, DECK8, 8), "a UI with no faction to bind to is rejected");
 }
 
 int main(void) {
@@ -104,6 +126,8 @@ int main(void) {
     test_back_cancels_with_nothing_spent();
     test_placement_writes_back_decorum();
     test_cancelled_faction_is_blocked();
+    test_shared_faction_is_seen_by_both_sides();
+    test_ui_init_requires_a_faction();
     printf("\n%s\n", failures == 0 ? "ALL PASS" : "SOME FAILED");
     return failures == 0 ? 0 : 1;
 }
