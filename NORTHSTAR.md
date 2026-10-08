@@ -126,6 +126,10 @@ wired to anything yet — this is the cheapest real integration available, not a
   independent UI). Each of these is real work with its own open questions (§5) — sequenced after
   3.1-3.3 because they're refinements of an ECOWAR+BIG_O link that doesn't exist yet at all.
 
+**§3.4 card language (kanban #583, 2026-10-08):** audited, not ported. ECOWAR's DAMAGE and HEAL and FLOW map partly
+to DEADWEIGHT channels. SLOW, SILENCE and MYTHIC scaling have no equivalent, so the grammar would need changing,
+which is a founder decision. See `audits/card_language_mapping.md`.
+
 ## 4) Full `github.com/emilyspringerton/*` inventory — what else is relevant, checked live
 
 Pulled via `gh repo list emilyspringerton --limit 200` this session (91 repos total, real org
