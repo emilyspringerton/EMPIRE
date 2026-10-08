@@ -159,11 +159,11 @@ drift). Relevant hits beyond the six named above:
    session**: tech tree and ECOWAR's units both render as apps inside the BURNER UI phone shell
    (§3.2). Still open: the actual *content/layout* of a tech-tree phone app and a units phone app
    — not designed, only the shell they'll use is settled.
-4. Should the TRAPX-doctrine generalization (3.4) run through the standalone `TRAPX` repo's own
-   real ruleset (grid/alignment/pressure/deck-of-operations) directly, or through
-   `SHANKPIT/docs2/TRAPX_NORTHSTAR.md`'s derivative city-sim framing (Field Offices, Watchers, K9,
-   Fame table) that BIG_O already partially implements? These are two different, only
-   partially-overlapping specs sharing one name — flagged, not reconciled here.
+4. ~~Should the TRAPX-doctrine generalization (3.4) run through the standalone `TRAPX` repo or
+   `SHANKPIT/docs2/TRAPX_NORTHSTAR.md`?~~ **Reconciled (kanban #581, 2026-10-08):** the standalone `TRAPX` repo is
+   the doctrine. The SHANKPIT document is a separate product that shares the name. Still open for the founder:
+   the grid conflict (README 10/12 vs code 20) and whether BIG_O adopts the cell model. See
+   `audits/trapx_doctrine_reconciliation.md`.
 5. REDGARDEN still has no auth model (carried over from the prior session's finding) — irrelevant
    to the hero-UI role itself (3.4's asset lift doesn't need REDGARDEN's own account system) but
    worth remembering if REDGARDEN ever needs to run live alongside ECOWAR rather than just donate
