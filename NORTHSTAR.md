@@ -67,6 +67,11 @@ already have to `PARENA/stdlib/` core — a consuming layer, not a replacement f
 
 ## 3) Merge order: ECOWAR + BIG_O first (founder's own explicit sequencing)
 
+**Status (2026-10-08):** §3.1 has a first real bridge in this repo: `bridge/faction_bridge.{h,c}`, tested
+headlessly against a vendored copy of BIG_O's witness rules (`make test`). The decorum gate and write-back are
+real; the MYTHIC/MUNDANE mapping is an invented v1 tuning pending founder sign-off. ECOWAR's own copy (`aff6ce0`)
+is not switched onto this module yet. §3.2 TECHTREE shipped as a BIG_O phone app (BIG_O `8f28e26`), shell only.
+
 **Why this pair, first:** ECOWAR already has real cards with no UI; BIG_O already has a real
 headless sim with no GUI. Both halves of "client ↔ sim" exist independently and neither is
 wired to anything yet — this is the cheapest real integration available, not a new build.
